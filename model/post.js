@@ -9,24 +9,32 @@ const posts = module.exports = {};
 // returns a new array that contains only the posts that contain one of the options at the key checked
 const filterData = (data, key, options) => {
   const params = {};
-  options.split(",").forEach((elem) => {
+  options.split(",").forEach(elem => {
     // if we're filtering by country, we need to convert the country abbreviation to the actual name
     if (key === "country")
       elem = utils.getCountry(elem.toUpperCase());
     params[elem.toLowerCase()] = true;
   });
   // Filter by the provided key using the object we made from the filter options
-  return data.filter(function(elem) {
+  return data.filter(elem => {
     if (key !== "body")
       return params[elem[key].toLowerCase()];
     else {
-
+      // If we're filtering by words contained in the body, we need to check every
+      // word to see if one of them exists
+      let pass = true;
+      let currBody = elem.body.toLowerCase();
+      Object.keys(params).forEach(word => {
+        if (!currBody.includes(word.toLocaleLowerCase()))
+          pass = false;
+      })
+      return pass;
     }
     
   })
 }
 
-posts.getAll = (options) => {
+posts.getAll = options => {
   // Copy the data to preserve the original
   let returnData = [...DATA];
 
@@ -40,17 +48,17 @@ posts.getAll = (options) => {
       break;
   }
 
-  // Check for country filter
+  // Check for country filter, will return results that match any of the countries given
   if (typeof options.country === "string")
     returnData = filterData(returnData, "country", options.country)
 
-  // Check for city filter
+  // Check for city filter, will return results that match any of the cities given
   if (typeof options.city === "string")
     returnData = filterData(returnData, "city", options.city)
 
-  // Check for contains filter
+  // Check for contains filter, will return results that match all of the terms given
   if (typeof options.contains === "string")
-    returnData = filterData(returnData, "body", options.city)
+    returnData = filterData(returnData, "body", options.contains)
   
 
   // If an entry limit was defined, use it

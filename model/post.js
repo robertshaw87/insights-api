@@ -83,18 +83,18 @@ posts.getAggregate = options => {
     sentiment_score: {}
   }
   // Check if the user specified a start or stop date
-  if (options.startDate || options.stopDate) {
+  if (options.start_date || options.stop_date) {
     // If the start or stop date exist, convert them to the same format as the timestamp
-    const startDate = options.startDate && moment(options.startDate, "YYYYMMDD").format("MM/DD/YYYY HH:mm:ss");
-    const stopDate = options.stopDate && moment(options.stopDate, "YYYYMMDD").format("MM/DD/YYYY HH:mm:ss");
+    const start_date = options.start_date && moment(options.start_date, "YYYYMMDD").format("MM/DD/YYYY HH:mm:ss");
+    const stop_date = options.stop_date && moment(options.stop_date, "YYYYMMDD").format("MM/DD/YYYY HH:mm:ss");
 
-    // Remove all the elements that occur before the startDate or after the stopDate
+    // Remove all the elements that occur before the start_date or after the stop_date
     statData = statData.filter(elem => {
-      if (startDate && (utils.compareTime(elem.time_stamp, startDate, "day") === -1)){
+      if (start_date && (utils.compareTime(elem.time_stamp, start_date, "day") === -1)){
         return false;
       }
         
-      if (stopDate && (utils.compareTime(stopDate, elem.time_stamp, "day") === -1))
+      if (stop_date && (utils.compareTime(stop_date, elem.time_stamp, "day") === -1))
         return false;
       return true;
     })

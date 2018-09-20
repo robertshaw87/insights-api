@@ -17,7 +17,8 @@ const filterData = (data, key, options) => {
     // if we're filtering by country, we need to convert the country abbreviation to the actual name
     if (key === "country")
       elem = utils.getCountry(elem.toUpperCase());
-    params[elem.toLowerCase()] = true;
+    if (elem)
+      params[elem.toLowerCase()] = true;
   });
   // Filter by the provided key using the object we made from the filter options
   return data.filter(elem => {

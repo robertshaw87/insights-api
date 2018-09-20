@@ -7,7 +7,7 @@ Customer Sentiment API
 
 1. Reading the Documentation
 2. [Access Tokens](#access-tokens)
-3. Customer Postings
+3. [Customer Postings](#customer-postings)
 4. Statistical Aggregates
 5. [Starting the Server](#starting-the-server)
 6. [Technologies Used](#technologies-used)
@@ -16,8 +16,18 @@ Customer Sentiment API
 <hr>
 
 ## Access Tokens
-* You can access the API using either the key `dropbox` or the key `insights`
-* You 
+
+* You can access the API using either the temporary keys `dropbox` or `insights`
+* This key must be passed into any API call as a query under the key `key`
+    * For example, if you making a call to the Customer Postings API route on your local server, the query URL would be
+    > http://localhost:3000/api/posts/?key=dropbox
+* If you do not have a valid key, you will not be able to access either API
+
+<hr>
+
+## Customer Postings
+
+* This API route serves up 
 
 <hr>
 

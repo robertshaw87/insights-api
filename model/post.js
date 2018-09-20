@@ -105,27 +105,51 @@ posts.getAggregate = options => {
   // Check if the user specified a time granularity
   // Averaging all the values for each score within the time granularity before finding statistical aggregations
   if (options.granularity === "hour" || options.granularity === "day" || options.granularity === "week") {
+    // Create an object to keep track of the values for the current granularity segment
     let currGrain = {};
+    // Create a new array to contain the values generated from the granularity
     let newData = [];
+    // Iterate through the data set
     statData.forEach((elem, i) => {
-      if (!currGrain.granularityRef) {
+      // For the first element of the set, populate the current granularity object
+      if (i === 0) {
         currGrain = {
           granularityRef: elem.time_stamp,
           numElements: 1,
           relevance_score: parseFloat(elem.relevance_score),
           sentiment_score: parseFloat(elem.sentiment_score)
         }
+      // If it's not the first element, check if the current element is within the same granularity as the current object
       } else if (utils.sameTime(currGrain.granularityRef, elem.time_stamp, options.granularity)) {
+        // If it is, add the relevance and sentiment scores to the object and increment the count of number of elements it's combining
         currGrain.numElements++;
         currGrain.relevance_score += parseFloat(elem.relevance_score);
         currGrain.sentiment_score += parseFloat(elem.sentiment_score);
+      // If the current element is within a new granularity segment
       } else {
+        // Push the average relevance score and sentiment score from the previous granularity segment into the new array
+        newData.push({
+          relevance_score: parseFloat((currGrain.relevance_score / currGrain.numElements).toPrecision(6)),
+          sentiment_score: parseFloat((currGrain.sentiment_score / currGrain.numElements).toPrecision(6)),
+        })
+        // Reset the granularity object with the data for the new element
+        currGrain = {
+          granularityRef: elem.time_stamp,
+          numElements: 1,
+          relevance_score: parseFloat(elem.relevance_score),
+          sentiment_score: parseFloat(elem.sentiment_score)
+        }
+      }
+      // If we've reached the end of the array, add the data for the current granularity object into the new array
+      if (i === statData.length - 1) {
         newData.push({
           relevance_score: parseFloat((currGrain.relevance_score / currGrain.numElements).toPrecision(6)),
           sentiment_score: parseFloat((currGrain.sentiment_score / currGrain.numElements).toPrecision(6)),
         })
       }
-    })
+    });
+    // Set the new array to be the array we operate on
+    statData = newData;
   }
 
   if (options.median === "true") {

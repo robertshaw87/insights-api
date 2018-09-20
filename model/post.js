@@ -75,8 +75,8 @@ posts.getAggregate = options => {
     relevance_score: {},
     sentiment_score: {}
   }
-  // find the median for the relevance score
-  stats["relevance_score"].median = utils.statistics.median(statData, "relevance_score")
+  // find the mean for the relevance score
+  stats["relevance_score"].range = utils.statistics.range(statData, "relevance_score")
   // Find the mean for 
   return stats;
 }

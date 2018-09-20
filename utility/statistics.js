@@ -6,7 +6,7 @@ statistics.mean = (array, field) => {
   // Finds the sum of the values of the key within the array
   const arrSum = array.reduce((sum, elem) => sum + parseFloat(elem[field]), 0);
   // Divide the sum by the number of elements in the array for the mean
-  return (arrSum / array.length).toPrecision(6);
+  return parseFloat((arrSum / array.length).toPrecision(6));
 }
 
 // Takes in an array of posts and the key to find the median value of
@@ -20,7 +20,7 @@ statistics.median = (array, field) => {
   else {
     const value1 = array[Math.floor((array.length-1) / 2)][field];
     const value2 = array[array.length / 2][field];
-    return (value1 + value2)/2
+    return parseFloat(((value1 + value2)/2).toPrecision(6))
   }
 }
 

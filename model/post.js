@@ -2,6 +2,9 @@
 const DATA = require("./testData.json").data;
 // Import helper utilities
 const utils = require("../utility");
+// Import moment.js for time conversions
+const moment = require("moment");
+
 
 // Setup the export object
 const posts = module.exports = {};
@@ -33,6 +36,7 @@ const filterData = (data, key, options) => {
   })
 }
 
+// Returns all the posts in the database, filtered and sorted by the provided options
 posts.getAll = options => {
   // Copy the data to preserve the original
   let returnData = [...DATA];
@@ -68,15 +72,54 @@ posts.getAll = options => {
   return returnData;
 }
 
+
+// Returns the statistical aggregations for the data, with restrictions as defined by the options
 posts.getAggregate = options => {
   // Copy the data to preserve the original and sort by ascending time
   let statData = [...DATA].sort((post1,post2) => utils.compareTime(post1.time_stamp, post2.time_stamp));
+  // Instantiate the return object
   let stats = {
     relevance_score: {},
     sentiment_score: {}
   }
-  // find the mean for the relevance score
+  // If the user specified a start or stop date
+  if (options.startDate || options.stopDate) {
+    // If the start or stop date exist, convert them to the same format as the timestamp
+    const startDate = options.startDate && moment(options.startDate, "YYYYMMDD").format("MM/DD/YYY HH:mm:ss");
+    const stopDate = options.stopDate && moment(options.stopDate, "YYYYMMDD").format("MM/DD/YYY HH:mm:ss");
+    // Remove all the elements that occur before the startDate or after the stopDate
+    statData.filter(elem => {
+      if (startDate && (utils.compareTime(elem.time_stamp, startDate, "day") === -1))
+        return false;
+      if (stopDate && (utils.compareTime(stopDate, elem.time_stamp, "day") === -1))
+        return false;
+      return true;
+    })
+  }
+  if (options.median === "true") {
+  // find the median for the relevance_score
+  stats["relevance_score"].median = utils.statistics.median(statData, "relevance_score")
+  // Find the median for the sentiment_score
+  stats["sentiment_score"].median = utils.statistics.median(statData, "sentiment_score")
+  }
+  if (options.mode === "true") {
+  // find the mode for the relevance_score
+  stats["relevance_score"].mode = utils.statistics.mode(statData, "relevance_score")
+  // Find the mode for the sentiment_score
+  stats["sentiment_score"].mode = utils.statistics.mode(statData, "sentiment_score")
+  }
+  if (options.range === "true") {
+  // find the range for the relevance_score
   stats["relevance_score"].range = utils.statistics.range(statData, "relevance_score")
-  // Find the mean for 
+  // Find the range for the sentiment_score
+  stats["sentiment_score"].range = utils.statistics.range(statData, "sentiment_score")
+  }
+
+  // find the mean for the relevance_score
+  stats["relevance_score"].mean = utils.statistics.mean(statData, "relevance_score")
+  // Find the mean for the sentiment_score
+  stats["sentiment_score"].mean = utils.statistics.mean(statData, "sentiment_score")
+
+  // Return the object containing the statistical aggregations for the relevance and sentiments scores
   return stats;
 }

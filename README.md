@@ -8,7 +8,7 @@ Customer Sentiment API
 1. Reading the Documentation
 2. [Access Tokens](#access-tokens)
 3. [Customer Postings](#customer-postings)
-4. Statistical Aggregates
+4. [Statistical Aggregates](#statistical-aggregates)
 5. [Starting the Server](#starting-the-server)
 6. [Technologies Used](#technologies-used)
 7. [Author](#author)
@@ -16,6 +16,10 @@ Customer Sentiment API
 <hr>
 
 ## Access Tokens
+
+> http://localhost:3000/api/posts/
+
+[Back to top](#insights-api)
 
 * You can access the API using either the temporary keys `dropbox` or `insights`
 * This key must be passed into any API call as a query under the key `key`
@@ -27,6 +31,8 @@ Customer Sentiment API
 
 ## Customer Postings
 
+[Back to top](#insights-api)
+
 * This API route serves up an array of individual posts by users along with the meta information for each post.
 * The base URL for this API is
     > http://localhost:3000/api/posts/
@@ -35,45 +41,45 @@ Customer Sentiment API
 
 * The API will return an array of postings that match the query parameters provided
 
-> http://localhost:3000/api/posts/?key=dropbox&length=3
+    > http://localhost:3000/api/posts/?key=dropbox&length=3
 
-```javascript
-[
-    {
-      "body": "Aenean id massa ex. Curabitur euismod erat scelerisque nibh ornare ultricies.",
-      "city": "Houston",
-      "company": "Apple",
-      "country": "United States of America",
-      "id": 1,
-      "relevance_score": 0.99,
-      "sector": "Technology",
-      "sentiment_score": 1.05,
-      "time_stamp": "7/30/2018 17:12:57"
-    }, 
-    {
-      "body": "Curabitur et tortor semper, laoreet ligula eu, porta orci.",
-      "city": "Portland",
-      "company": "Toyota",
-      "country": "United States of America",
-      "id": 2,
-      "relevance_score": 0.16,
-      "sector": "Automotive",
-      "sentiment_score": 2.43,
-      "time_stamp": "7/30/2018 15:39:21"
-    }, 
-    {
-      "body": "Sed vel vulputate turpis, sit amet iaculis lorem. Vestibulum tempor dapibus tellus id commodo.",
-      "city": "Dallas",
-      "company": "AT&T",
-      "country": "United States of America",
-      "id": 3,
-      "relevance_score": 0.23,
-      "sector": "Telecom",
-      "sentiment_score": 3.95,
-      "time_stamp": "7/30/2018 4:22:33"
-    }
-]
-```
+    ```javascript
+    [
+        {
+          "body": "Aenean id massa ex. Curabitur euismod erat scelerisque nibh ornare ultricies.",
+          "city": "Houston",
+          "company": "Apple",
+          "country": "United States of America",
+          "id": 1,
+          "relevance_score": 0.99,
+          "sector": "Technology",
+          "sentiment_score": 1.05,
+          "time_stamp": "7/30/2018 17:12:57"
+        }, 
+        {
+          "body": "Curabitur et tortor semper, laoreet ligula eu, porta orci.",
+          "city": "Portland",
+          "company": "Toyota",
+          "country": "United States of America",
+          "id": 2,
+          "relevance_score": 0.16,
+          "sector": "Automotive",
+          "sentiment_score": 2.43,
+          "time_stamp": "7/30/2018 15:39:21"
+        }, 
+        {
+          "body": "Sed vel vulputate turpis, sit amet iaculis lorem. Vestibulum tempor dapibus tellus id commodo.",
+          "city": "Dallas",
+          "company": "AT&T",
+          "country": "United States of America",
+          "id": 3,
+          "relevance_score": 0.23,
+          "sector": "Telecom",
+          "sentiment_score": 3.95,
+          "time_stamp": "7/30/2018 4:22:33"
+        }
+    ]
+    ```
 
 * There are several valid query parameters for this API route
     1. Given no parameters, this route will return all the posts in the database ordered by the post ID.
@@ -122,11 +128,78 @@ Customer Sentiment API
         * This returns all the posts originating from those cities
             * If you included more than one city in the query, it will return the posts from all the cities mentioned in the query
 
-    6. The `contains` parameter searches the body of the post and flters the results by 
+    6. The `contains` parameter searches the body of the post and flters the results by the words provided
+        * If you wish to further narrow down your results, you can add multiple words to search for. Unlike the searches in the city, a posting will only be returned if it contains all the words included in the query
+
+            > http://localhost:3000/api/posts/?key=dropbox&contains=sollicitudin,lobortis
 
 <hr>
 
+## Statistical Aggregates
+
+[Back to top](#insights-api)
+
+> http://localhost:3000/api/posts/aggregate/
+
+* This API route serves up an object containing statistical aggregation for both the relevence and sentiment score
+    * By default, this object will contain the statistical mean of all the relevance_scores and the statistical mean of all the sentiment_scores upon arrival.
+        > http://localhost:3000/api/posts/aggregate/?key=dropbox
+
+        ```javascript
+        {
+          "relevance_score": {
+            "mean": 0.33975
+          },
+          "sentiment_score": {
+            "mean": 0.10203
+          }
+        }
+        ```
+
+* There are several valid query parameters for this API route
+    1. Given no parameters other than the API key, this route will simply return the mean for the relevance and sentiment scores
+
+    2. the `median`, `mode`, and `range` query parameters all take in a boolean. If any are set to true, it will return the corresponding value for both relevance_scores and sentiment_cards
+        * The median will return the middle score if the posts were to be arranged in order by their corresponding score. If there are two posts in the middle, the median will be the average of the score for those two posts.
+        * The mode will return a single score if there is one mode and an array of scores if there are more than one
+        * The range will return an array where the first number is the lower bound of the dataset and the second number is the upper bound of the dataset (both are inclusive)
+            > http://localhost:3000/api/posts/aggregate/?key=dropbox&median=true&mode=true&range=true
+
+            ```javascript
+            {
+              "relevance_score": {
+                "median": 0.26,
+                "mode": 0,
+                "range": [
+                  0,
+                  0.99
+                ],
+                "mean": 0.33975
+              },
+              "sentiment_score": {
+                "median": 0.105,
+                "mode": [
+                  2.25,
+                  3.9
+                ],
+                "range": [
+                  -4.98,
+                  4.99
+                ],
+                "mean": 0.10203
+              }
+            }
+            ```
+
+    3. You can limit the time period upon which the statistical aggregation is calculated by specifying a `start_date` and a `stop_date` in the query
+        * The date must be specified in `YYYYMMDD` format
+
+      <hr>
+
 ## Starting the Server
+
+[Back to top](#insights-api)
+
 1. You must have [Node.js](https://nodejs.org/en/) installed on your machine in order to run this server
     * Remember to install the Node Package Manager!
 2. Once you have `Node.js` is installed, navigate inside the `server` folder using your terminal

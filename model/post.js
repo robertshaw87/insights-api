@@ -101,8 +101,6 @@ posts.getAggregate = options => {
     })
   }
 
-  console.log("========================================")
-  console.log(moment("2018-09-17").isSame(moment("2018-09-14"), "week"))
   // Check if the user specified a time granularity
   // Averaging all the values for each score within the time granularity before finding statistical aggregations
   if (options.granularity === "hour" || options.granularity === "day" || options.granularity === "week") {

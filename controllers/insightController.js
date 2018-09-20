@@ -5,7 +5,7 @@ const utils = require("../utility");
 const post = require("../model/post.js");
 
 // The "/api/posts" Route returns the full data of each post
-router.get("/posts", function (req, res) {
+router.get("/posts", (req, res) => {
   const {key, ...options} = req.query;
   // Check if the provided API key is valid
   if (utils.checkKey(key)) {

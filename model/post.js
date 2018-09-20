@@ -70,7 +70,13 @@ posts.getAll = options => {
 
 posts.getAggregate = options => {
   // Copy the data to preserve the original and sort by ascending time
-  let data = [...DATA].sort((post1,post2) => utils.compareTime(post1.time_stamp, post2.time_stamp));
-
-  
+  let statData = [...DATA].sort((post1,post2) => utils.compareTime(post1.time_stamp, post2.time_stamp));
+  let stats = {
+    relevance_score: {},
+    sentiment_score: {}
+  }
+  // find the median for the relevance score
+  stats["relevance_score"].median = utils.statistics.median(statData, "relevance_score")
+  // Find the mean for 
+  return stats;
 }

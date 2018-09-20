@@ -6,5 +6,7 @@ module.exports = {
   // Given two times and a granularity, returns true if the two times are within the same time granularity
   sameTime: require("./sameTime.js"),
   // Given a country's two letter abbreviation, returns the full name of the country
-  getCountry: require("./getCountry.js")
+  getCountry: require("./getCountry.js"),
+  
+  statistics: require("./statistics.js")
 }

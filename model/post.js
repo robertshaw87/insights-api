@@ -82,20 +82,52 @@ posts.getAggregate = options => {
     relevance_score: {},
     sentiment_score: {}
   }
-  // If the user specified a start or stop date
+  // Check if the user specified a start or stop date
   if (options.startDate || options.stopDate) {
     // If the start or stop date exist, convert them to the same format as the timestamp
-    const startDate = options.startDate && moment(options.startDate, "YYYYMMDD").format("MM/DD/YYY HH:mm:ss");
-    const stopDate = options.stopDate && moment(options.stopDate, "YYYYMMDD").format("MM/DD/YYY HH:mm:ss");
+    const startDate = options.startDate && moment(options.startDate, "YYYYMMDD").format("MM/DD/YYYY HH:mm:ss");
+    const stopDate = options.stopDate && moment(options.stopDate, "YYYYMMDD").format("MM/DD/YYYY HH:mm:ss");
+
     // Remove all the elements that occur before the startDate or after the stopDate
-    statData.filter(elem => {
-      if (startDate && (utils.compareTime(elem.time_stamp, startDate, "day") === -1))
+    statData = statData.filter(elem => {
+      if (startDate && (utils.compareTime(elem.time_stamp, startDate, "day") === -1)){
         return false;
+      }
+        
       if (stopDate && (utils.compareTime(stopDate, elem.time_stamp, "day") === -1))
         return false;
       return true;
     })
   }
+
+  console.log("========================================")
+  console.log(moment("2018-09-17").isSame(moment("2018-09-14"), "week"))
+  // Check if the user specified a time granularity
+  // Averaging all the values for each score within the time granularity before finding statistical aggregations
+  if (options.granularity === "hour" || options.granularity === "day" || options.granularity === "week") {
+    let currGrain = {};
+    let newData = [];
+    statData.forEach((elem, i) => {
+      if (!currGrain.granularityRef) {
+        currGrain = {
+          granularityRef: elem.time_stamp,
+          numElements: 1,
+          relevance_score: parseFloat(elem.relevance_score),
+          sentiment_score: parseFloat(elem.sentiment_score)
+        }
+      } else if (utils.sameTime(currGrain.granularityRef, elem.time_stamp, options.granularity)) {
+        currGrain.numElements++;
+        currGrain.relevance_score += parseFloat(elem.relevance_score);
+        currGrain.sentiment_score += parseFloat(elem.sentiment_score);
+      } else {
+        newData.push({
+          relevance_score: parseFloat((currGrain.relevance_score / currGrain.numElements).toPrecision(6)),
+          sentiment_score: parseFloat((currGrain.sentiment_score / currGrain.numElements).toPrecision(6)),
+        })
+      }
+    })
+  }
+
   if (options.median === "true") {
   // find the median for the relevance_score
   stats["relevance_score"].median = utils.statistics.median(statData, "relevance_score")
@@ -119,6 +151,7 @@ posts.getAggregate = options => {
   stats["relevance_score"].mean = utils.statistics.mean(statData, "relevance_score")
   // Find the mean for the sentiment_score
   stats["sentiment_score"].mean = utils.statistics.mean(statData, "sentiment_score")
+
 
   // Return the object containing the statistical aggregations for the relevance and sentiments scores
   return stats;

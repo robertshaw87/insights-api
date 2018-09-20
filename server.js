@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 
 // Import API routes from controller
-const API_ROUTES = require("./controllers/insight_controller.js");
+const API_ROUTES = require("./controllers/insightController.js");
 app.use("/api", API_ROUTES);
 
 // Set the server to start listening on our PORT

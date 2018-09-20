@@ -1,5 +1,5 @@
 const validKeys = ["dropbox", "insights"];
 
-modules.exports = function(key) {
+module.exports = function(key) {
   return validKeys.includes(key);
 }

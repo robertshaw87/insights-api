@@ -5,16 +5,24 @@ const utils = require("../utility");
 
 const posts = module.exports = {};
 
+// Helper function that takes in an array of posts, a key to check, and options to check against the key
+// returns a new array that contains only the posts that contain one of the options at the key checked
 const filterData = (data, key, options) => {
   const params = {};
   options.split(",").forEach((elem) => {
+    // if we're filtering by country, we need to convert the country abbreviation to the actual name
     if (key === "country")
       elem = utils.getCountry(elem.toUpperCase());
-    params[elem] = true;
+    params[elem.toLowerCase()] = true;
   });
-  // Filter by the provided key
+  // Filter by the provided key using the object we made from the filter options
   return data.filter(function(elem) {
-    return params[elem[key]];
+    if (key !== "body")
+      return params[elem[key].toLowerCase()];
+    else {
+
+    }
+    
   })
 }
 
@@ -32,35 +40,18 @@ posts.getAll = (options) => {
       break;
   }
 
-  // Check for country filter and use getCountry utility to translate abbreviation to full country name
-  if (options.country && (typeof options.country === "string")) {
+  // Check for country filter
+  if (typeof options.country === "string")
     returnData = filterData(returnData, "country", options.country)
-    // // Handle multiple countries seperated by commas
-    // // Country names are stored in an object for efficient reference
-    // const countries = {};
-    // options.country.split(",").forEach((elem) => {
-    //   countries[utils.getCountry(elem.toUpperCase())] = true;
-    // });
-    // // Filter by country
-    // returnData = returnData.filter(function(elem) {
-    //   return countries[elem.country];
-    // })
-  }
 
   // Check for city filter
-  if (options.city && (typeof options.city === "string")) {
-    // Handle multiple cities seperated by commas
-    // City names are stored in an object for efficient reference
-    const cities = {};
-    options.city.split(",").forEach((elem) => {
-      cities[elem.toLowerCase()] = true;
-    });
-    console.log(cities)
-    // Filter by city
-    returnData = returnData.filter(function(elem) {
-      return cities[elem.city.toLowerCase()];
-    })
-  }
+  if (typeof options.city === "string")
+    returnData = filterData(returnData, "city", options.city)
+
+  // Check for contains filter
+  if (typeof options.contains === "string")
+    returnData = filterData(returnData, "body", options.city)
+  
 
   // If an entry limit was defined, use it
   const maxEntries = isNaN(options.limit) ? DATA.length : options.limit;

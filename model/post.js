@@ -4,7 +4,7 @@ const utils = require("../utility");
 const posts = module.exports = {};
 
 posts.getAll = function(options) {
-  const returnData = [...DATA];
+  let returnData = [...DATA];
   const maxEntries = isNaN(options.limit) ? DATA.length : options.limit;
   switch (options.sort) {
     case "asc": 
@@ -17,6 +17,14 @@ posts.getAll = function(options) {
         return (-1 * utils.compareTime(post1.time_stamp, post2.time_stamp));
       });
       break;
+  }
+  if (options.country) {
+    countries = {}
+    returnData = returnData.filter(function(elem) {
+      if (countries[elem.country]) return false;
+      countries[elem.country] = true;
+      return true;
+    })
   }
   returnData.splice(maxEntries);
   return returnData;

@@ -1,4 +1,5 @@
 module.exports = {
   checkKey: require("./checkKey.js"),
-  compareTime: require("./compareTime.js")
+  compareTime: require("./compareTime.js"),
+  getCountry: require("./getCountry.js")
 }

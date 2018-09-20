@@ -5,7 +5,7 @@ Customer Sentiment API
 
 ## Table of Contents
 
-1. Reading the Documentation
+1. [Reading the Documentation](#reading-the-documentation)
 2. [Access Tokens](#access-tokens)
 3. [Customer Postings](#customer-postings)
 4. [Statistical Aggregates](#statistical-aggregates)
@@ -15,9 +15,19 @@ Customer Sentiment API
 
 <hr>
 
-## Access Tokens
+## Reading the Documentation
 
-> http://localhost:3000/api/posts/
+[Back to top](#insights-api)
+
+* This documentation is grouped by endpoint
+    * Each endpoint URL only accepts the GET method
+    * The API has specific functions at these URLs that can be further refined with query parameters
+        * There is a table of query parameters and their expected values at the start of each section with further explanation within the section.
+    
+
+<hr>
+
+## Access Tokens
 
 [Back to top](#insights-api)
 
@@ -32,6 +42,8 @@ Customer Sentiment API
 ## Customer Postings
 
 [Back to top](#insights-api)
+
+> http://localhost:3000/api/posts/
 
 * This API route serves up an array of individual posts by users along with the meta information for each post.
 * The base URL for this API is
@@ -142,6 +154,8 @@ Customer Sentiment API
 > http://localhost:3000/api/posts/aggregate/
 
 * This API route serves up an object containing statistical aggregation for both the relevence and sentiment score
+    * The base URL for this API is
+        > http://localhost:3000/api/posts/aggregate/
     * By default, this object will contain the statistical mean of all the relevance_scores and the statistical mean of all the sentiment_scores upon arrival.
         > http://localhost:3000/api/posts/aggregate/?key=dropbox
 
@@ -193,8 +207,40 @@ Customer Sentiment API
 
     3. You can limit the time period upon which the statistical aggregation is calculated by specifying a `start_date` and a `stop_date` in the query
         * The date must be specified in `YYYYMMDD` format
+        * If a `start_date` is not specified, the aggregation will include all the posts starting from the oldest
+        * If a `stop_date` is not specified, the aggregation will include all the posts until the most recent post
 
-      <hr>
+            >http://localhost:3000/api/posts/aggregate/?key=dropbox&start_date=20180528&stop_date=20180702
+
+            ```javascript
+            {
+              "relevance_score": {
+                  "mean": 0.335368
+              },
+                "sentiment_score": {
+                  "mean": -0.226397
+              }
+            }
+            ```
+
+    4. You can choose to limit the time granularity of the statistical aggregation with the `granularity` query
+        * `week`, `day`, and `hour` are the only valid values to this query.
+        * This limits the number of individual scores we're using for the data aggregation
+            * It first averages together all the sentiment scores and the relevance scores from each week, day, or hour depending upon the query before calculating the statistical aggregation with the new grouped dataset
+            > http://localhost:3000/api/posts/aggregate/?key=dropbox&granularity=week
+
+            ```javascript
+            {
+              "relevance_score": {
+                "mean": 0.342497
+              },
+              "sentiment_score": {
+                "mean": 0.160439
+              }
+            }
+            ```
+
+<hr>
 
 ## Starting the Server
 

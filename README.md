@@ -171,7 +171,7 @@ median | boolean - display the median scores
 mode | boolean - display the mode scores, array if there are multiple modes
 range | boolean - display the range of scores as an array, first element is lowest and second is highest
 start_date | string - date in YYYYMMDD format to start evaluation
-stop_date | string - date in YYYYMMDD format to start evaluation
+stop_date | string - date in YYYYMMDD format to stop evaluation
 granularity | string - "week", "day", or "hour" to specify time spans to group postings into
 
 * This API route serves up an object containing statistical aggregation for both the relevence and sentiment score

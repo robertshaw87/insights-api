@@ -1,8 +1,9 @@
 // Use the provided data
 const DATA = require("./testData.json").data;
-// import helper utilities
+// Import helper utilities
 const utils = require("../utility");
 
+// Setup the export object
 const posts = module.exports = {};
 
 // Helper function that takes in an array of posts, a key to check, and options to check against the key
@@ -20,8 +21,7 @@ const filterData = (data, key, options) => {
     if (key !== "body")
       return params[elem[key].toLowerCase()];
     else {
-      // If we're filtering by words contained in the body, we need to check every
-      // word to see if one of them exists
+      // If we're filtering by words contained in the body, we need to check every word to see if one of them exists
       let pass = true;
       let currBody = elem.body.toLowerCase();
       Object.keys(params).forEach(word => {
@@ -30,7 +30,6 @@ const filterData = (data, key, options) => {
       })
       return pass;
     }
-    
   })
 }
 
@@ -64,5 +63,14 @@ posts.getAll = options => {
   // If an entry limit was defined, use it
   const maxEntries = isNaN(options.limit) ? DATA.length : options.limit;
   returnData.splice(maxEntries);
+
+  // Return the modified data set
   return returnData;
+}
+
+posts.getAggregate = options => {
+  // Copy the data to preserve the original and sort by ascending time
+  let data = [...DATA].sort((post1,post2) => utils.compareTime(post1.time_stamp, post2.time_stamp));
+
+  
 }

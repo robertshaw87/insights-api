@@ -23,7 +23,11 @@ Customer Sentiment API
     * Each endpoint URL only accepts the GET method
     * The API has specific functions at these URLs that can be further refined with query parameters
         * There is a table of query parameters and their expected values at the start of each section with further explanation within the section.
-    
+        * Query parameters are added to the end of the base URL with query string encoding.
+            * A `?` after the URL denotes the start of inputting query parameters and each parameter is assigned a value with the `=` sign.
+            * Multiple query parameters can be used in one API call by seperating the query value pairs with the `&` sign.
+            > http://localhost:3000/api/posts/?key=dropbox&length=20&sort=desc
+        * Query Parameters are optional and are completely optional
 
 <hr>
 
@@ -44,6 +48,14 @@ Customer Sentiment API
 [Back to top](#insights-api)
 
 > http://localhost:3000/api/posts/
+
+Query Parameter | Expected Value
+--- | ---
+length | integer - number of results to return
+sort | string - "asc" or "desc" order by time stamp
+country | string - 2 character country abbreviation, seperated by commas
+city | string - city name, seperated by commas
+contains | string - words to search for in the body, seperated by commas
 
 * This API route serves up an array of individual posts by users along with the meta information for each post.
 * The base URL for this API is
@@ -152,6 +164,15 @@ Customer Sentiment API
 [Back to top](#insights-api)
 
 > http://localhost:3000/api/posts/aggregate/
+
+Query Parameter | Expected Value
+--- | ---
+median | boolean - display the median scores
+mode | boolean - display the mode scores, array if there are multiple modes
+range | boolean - display the range of scores as an array, first element is lowest and second is highest
+start_date | string - date in YYYYMMDD format to start evaluation
+stop_date | string - date in YYYYMMDD format to start evaluation
+granularity | string - "week", "day", or "hour" to specify time spans to group postings into
 
 * This API route serves up an object containing statistical aggregation for both the relevence and sentiment score
     * The base URL for this API is

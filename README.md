@@ -26,7 +26,7 @@ Customer Sentiment API
         * Query parameters are added to the end of the base URL with query string encoding.
             * A `?` after the URL denotes the start of inputting query parameters and each parameter is assigned a value with the `=` sign.
             * Multiple query parameters can be used in one API call by seperating the query value pairs with the `&` sign.
-            > http://localhost:3000/api/posts/?key=dropbox&length=20&sort=desc
+            > http://localhost:3000/api/posts/?key=dropbox&limit=20&sort=desc
         * Query Parameters are optional and are completely optional
 
 <hr>
@@ -51,7 +51,7 @@ Customer Sentiment API
 
 Query Parameter | Expected Value
 --- | ---
-length | integer - number of results to return
+limit | integer - number of results to return
 sort | string - "asc" or "desc" order by time stamp
 country | string - 2 character country abbreviation, seperated by commas
 city | string - city name, seperated by commas
@@ -65,7 +65,7 @@ contains | string - words to search for in the body, seperated by commas
 
 * The API will return an array of postings that match the query parameters provided
 
-    > http://localhost:3000/api/posts/?key=dropbox&length=3
+    > http://localhost:3000/api/posts/?key=dropbox&limit=3
 
     ```javascript
     [
@@ -108,8 +108,8 @@ contains | string - words to search for in the body, seperated by commas
 * There are several valid query parameters for this API route
     1. Given no parameters, this route will return all the posts in the database ordered by the post ID.
 
-    2. The `length` parameter takes in an integer and limits the number of results to that number
-        > http://localhost:3000/api/posts/?key=dropbox&length=20
+    2. The `limit` parameter takes in an integer and limits the number of results to that number
+        > http://localhost:3000/api/posts/?key=dropbox&limit=20
 
     3. The `sort` parameter is looking for either the string "asc" or the string "desc" and will sort the results in terms of ascending or descending time that the posts were created.
         > http://localhost:3000/api/posts/?key=dropbox&sort=desc
